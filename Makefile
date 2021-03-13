@@ -34,10 +34,16 @@ ClientSensitivityList = \
 	$(SRC_DIR)/Client.cpp \
 	$(INCLUDE_DIR)/Client.h \
 
-all: Server.out Client.out
+all: $(BUILD_DIR) Server.out Client.out
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+
+Server.out: $(BUILD_DIR)/Server.o $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(BUILD_DIR)/Server.out $(BUILD_DIR)/Server.o $(OBJECTS)
+
+Client.out: $(BUILD_DIR)/Client.o $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(BUILD_DIR)/Client.out $(BUILD_DIR)/Client.o $(OBJECTS)
 
 $(BUILD_DIR)/CommandHandler.o: $(CommandHandlerSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/CommandHandler.cpp -o $(BUILD_DIR)/CommandHandler.o
@@ -56,12 +62,6 @@ $(BUILD_DIR)/Server.o: $(ServerSensitivityList)
 
 $(BUILD_DIR)/Client.o: $(ClientSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/Client.cpp -o $(BUILD_DIR)/Client.o
-
-Server.out: $(BUILD_DIR)/Server.o $(OBJECTS)
-	$(CC) $(CFLAGS) -o Server.out $(BUILD_DIR)/Server.o $(OBJECTS)
-
-Client.out: $(BUILD_DIR)/Client.o $(OBJECTS)
-	$(CC) $(CFLAGS) -o Client.out $(BUILD_DIR)/Client.o $(OBJECTS)
 
 .PHONY: clean
 clean:
