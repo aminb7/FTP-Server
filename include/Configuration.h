@@ -4,7 +4,7 @@
 class Configuration
 {
 public:
-
+    Configuration() = default;
 private:
 
 };

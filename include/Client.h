@@ -4,7 +4,7 @@ class Client
 public:
     Client() = default;
 
-    void start();
+    void start(int server_port);
 
 private:
 };
