@@ -1,6 +1,31 @@
+#ifndef SEREVER_H_
+#define SEREVER_H_
+
 #include <vector>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
+
+using namespace std;
 
 #include "Configuration.h"
+#include "CommandHandler.h"
+
+using namespace std;
+
+#define SUCCESS true
+#define FAILURE false
+#define COMMAND 0
+#define ARG1 1
+#define ARG2 2
 
 class Server
 {
@@ -8,8 +33,15 @@ public:
     Server(Configuration configuration);
 
     void start();
+    void handleCreateNewDirectoryCommand(string dirPath);
+    void handleDeleteDirectoryOrFileCommand(string option, string dirPath);
+    vector<string> parseInput(char* input);
 
 private:
-    // CommandHandler command_handler;
-    // std::vector<User> users;
+    int command_channel_port;
+    int data_channel_port;
+    std::vector<User> users;
+    std::vector<std::string> files;
+
 };
+#endif

@@ -1,21 +1,13 @@
 #include "Server.h"
 
-#include <cstring>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <errno.h>
-
-using namespace std;
-
 Server::Server(Configuration configuration)
 //: users(configuration.get_users()),
 //command_handler(configuration.get_users())
+: command_channel_port(configuration.get_command_channel_port())
+, data_channel_port(configuration.get_data_channel_port())
+, users(configuration.get_users())
+, files(configuration.get_files())
+// command_handler(configuration.get_users())
 {
 }
 
@@ -46,7 +38,7 @@ void Server::start()
     FD_SET(server_fd, &copy_fds);
     int max_fd = server_fd;
     int activity;
-    char received_buffer[64] = {0};
+    char received_buffer[128] = {0};
 
     printf("server is starting ...\n");
     while (true)
@@ -96,6 +88,25 @@ void Server::start()
                     if (result > 0)
                     {
                         cout << "received command: " << received_buffer << endl;
+                        vector<string> info = parseInput(received_buffer);
+                        if (info[COMMAND] == "pwd") {
+                        }
+                        else if (info[COMMAND] == "mkd") {
+                            handleCreateNewDirectoryCommand(info[ARG1]);
+                        }
+                        else if (info[COMMAND] == "dele") {
+                            handleDeleteDirectoryOrFileCommand(info[ARG1], info[ARG2]);
+                        }
+                        else if (info[COMMAND] == "ls") {
+                        }
+                        else if (info[COMMAND] == "cwd") {
+                        }
+                        else if (info[COMMAND] == "rename") {
+                        }
+                        else if (info[COMMAND] == "retr") {
+                        }
+                        else if (info[COMMAND] == "help") {
+                        }
                     }
 
                     if (close_connection)
@@ -114,9 +125,43 @@ void Server::start()
     }
 }
 
+vector<string> Server::parseInput(char* input) {
+    vector<string> info;
+    char *token = strtok(input, " "); 
+   
+    while (token != NULL) 
+    { 
+        info.push_back(token);
+        token = strtok(NULL, " "); 
+    }
+    return info;
+}
+
+void Server::handleDeleteDirectoryOrFileCommand(string option, string dirPath) {
+    CommandHandler* commandHandler = CommandHandler::getInstance();
+    bool status = FAILURE;
+    if (option == "-d")
+        status = commandHandler->handleDeleteDirectory(dirPath);
+    else if (option == "-f")
+        status = commandHandler->handleDeleteFile(dirPath);
+
+    if(status == SUCCESS) {
+        cout << "250: " << dirPath << " deleted." << endl;
+    }
+}
+
+void Server::handleCreateNewDirectoryCommand(string dirPath) {
+    CommandHandler* commandHandler = CommandHandler::getInstance();
+    bool status = commandHandler->handleCreateNewDirectory(dirPath);
+    if(status == SUCCESS) {
+        cout << "257: " << dirPath << " created." << endl;
+    }
+}
+
 int main()
 {
-    Configuration configuration;
+    const string config_file_path = "configuration/config.json";
+    Configuration configuration(config_file_path);
     Server server(configuration);
     server.start();
     return 0;

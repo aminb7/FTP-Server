@@ -1,13 +1,15 @@
 #include "Client.h"
 
+#include <cstring>
 #include <iostream>
-#include <string>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -37,9 +39,10 @@ void Client::start(int server_port)
     while (true)
     {
         cout << "> ";
-        string command;
-        cin >> command;
-        send(client_fd, command.c_str(), command.size(), 0);
+        char command[MAX_COMMAND_LENGTH];
+        memset(command, 0, MAX_COMMAND_LENGTH);
+        cin.getline (command, MAX_COMMAND_LENGTH);
+        send(client_fd, command, MAX_COMMAND_LENGTH, 0);
     }
 }
 

@@ -9,10 +9,18 @@ using namespace std;
 class User
 {
 public:
+    User(std::string _name, std::string _password, bool _is_admin, int _available_size);
+
+    std::string get_name() {return name;}
 
 private:
-    string name;
-    string password;
+    std::string name;
+    std::string password;
+    bool is_admin;
+    int available_size;
+    std::string current_path;
+
+    int command_channel_socket;
 };
 
 #endif
