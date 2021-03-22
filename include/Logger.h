@@ -1,3 +1,5 @@
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
 #include <string>
 
@@ -11,3 +13,5 @@ public:
 private:
     std::string path;
 };
+
+#endif

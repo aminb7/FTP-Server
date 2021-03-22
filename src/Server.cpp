@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "Configuration.h"
 
 Server::Server(Configuration configuration)
 //: users(configuration.get_users()),
