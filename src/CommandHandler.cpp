@@ -1,5 +1,6 @@
 #include "CommandHandler.h"
 
+using namespace std;
 CommandHandler* CommandHandler::instance;
 
 CommandHandler::CommandHandler()

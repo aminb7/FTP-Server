@@ -10,8 +10,6 @@
 #include <sys/stat.h>
 //#include <system>
 
-using namespace std;
-
 #define SUCCESS true
 #define FAILURE false
 
@@ -19,15 +17,16 @@ class CommandHandler
 {
 public:
     static CommandHandler* getInstance();
-    bool handleCreateNewFile(string filePath);
-    bool handleCreateNewDirectory(string dirPath);
-    bool handleDeleteDirectory(string dirPath);
-    bool handleDeleteFile(string filePath);
-    string handleGetCurrentDirectory();
+    bool handleCreateNewFile(std::string filePath);
+    bool handleCreateNewDirectory(std::string dirPath);
+    bool handleDeleteDirectory(std::string dirPath);
+    bool handleDeleteFile(std::string filePath);
+    std::string handleGetCurrentDirectory();
+
 private:
     CommandHandler();
     static CommandHandler* instance;
-    vector<User*> users;
+    std::vector<User*> users;
     User* loggedIn;
 
 };

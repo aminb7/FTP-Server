@@ -1,5 +1,5 @@
-#ifndef SEREVER_H_
-#define SEREVER_H_
+#ifndef SERVER_H_
+#define SERVER_H_
 
 #include <vector>
 #include <string>
@@ -14,12 +14,8 @@
 #include <netinet/in.h>
 #include <errno.h>
 
-using namespace std;
-
 #include "Configuration.h"
 #include "CommandHandler.h"
-
-using namespace std;
 
 #define SUCCESS true
 #define FAILURE false
@@ -33,9 +29,9 @@ public:
     Server(Configuration configuration);
 
     void start();
-    void handleCreateNewDirectoryCommand(string dirPath);
-    void handleDeleteDirectoryOrFileCommand(string option, string dirPath);
-    vector<string> parseInput(char* input);
+    void handleCreateNewDirectoryCommand(std::string dirPath);
+    void handleDeleteDirectoryOrFileCommand(std::string option, std::string dirPath);
+    std::vector<std::string> parseInput(char* input);
 
 private:
     int command_channel_port;

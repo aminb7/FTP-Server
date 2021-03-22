@@ -99,9 +99,7 @@ void Server::start()
 
                     // Data is received.
                     if (result > 0)
-                    {
                         cout << "received command: " << received_buffer << endl;
-                    }
 
                     if (close_connection)
                     {
