@@ -46,7 +46,7 @@ void Server::start()
     FD_SET(server_fd, &copy_fds);
     int max_fd = server_fd;
     int activity;
-    char received_buffer[64] = {0};
+    char received_buffer[128] = {0};
 
     printf("server is starting ...\n");
     while (true)
