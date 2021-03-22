@@ -1,5 +1,7 @@
 #include "Server.h"
+#include "Configuration.h"
 
+#include <string>
 #include <cstring>
 #include <iostream>
 #include <stdio.h>
@@ -14,8 +16,11 @@
 using namespace std;
 
 Server::Server(Configuration configuration)
-//: users(configuration.get_users()),
-//command_handler(configuration.get_users())
+: command_channel_port(configuration.get_command_channel_port())
+, data_channel_port(configuration.get_data_channel_port())
+, users(configuration.get_users())
+, files(configuration.get_files())
+// command_handler(configuration.get_users())
 {
 }
 
@@ -116,7 +121,8 @@ void Server::start()
 
 int main()
 {
-    Configuration configuration;
+    const string config_file_path = "configuration/config.json";
+    Configuration configuration(config_file_path);
     Server server(configuration);
     server.start();
     return 0;
