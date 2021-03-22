@@ -17,27 +17,19 @@
 #include "Configuration.h"
 #include "CommandHandler.h"
 
-#define SUCCESS true
-#define FAILURE false
-#define COMMAND 0
-#define ARG1 1
-#define ARG2 2
-
-class Server
-{
+class Server {
 public:
     Server(Configuration configuration);
 
     void start();
-    void handleCreateNewDirectoryCommand(std::string dirPath);
-    void handleDeleteDirectoryOrFileCommand(std::string option, std::string dirPath);
-    std::vector<std::string> parseInput(char* input);
 
 private:
+    CommandHandler command_handler;
+
     int command_channel_port;
     int data_channel_port;
     std::vector<User> users;
     std::vector<std::string> files;
-
 };
+
 #endif

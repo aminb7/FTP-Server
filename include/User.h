@@ -4,8 +4,7 @@
 #include <iostream>
 #include <string>
 
-class User
-{
+class User {
 public:
     User(std::string name, std::string password, bool is_admin, int available_size);
 

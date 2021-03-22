@@ -6,8 +6,7 @@
 
 #include "User.h"
 
-class Configuration
-{
+class Configuration {
 public:
     Configuration(const std::string path);
 

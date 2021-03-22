@@ -4,11 +4,9 @@
 using namespace std;
 
 Logger::Logger(string path)
-: path(path)
-{
+: path(path) {
     // create log file if does not exist.
 }
 
-void log(string message)
-{
+void log(string message) {
 }

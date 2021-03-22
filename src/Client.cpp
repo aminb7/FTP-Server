@@ -13,8 +13,7 @@
 
 using namespace std;
 
-void Client::start(int server_port)
-{
+void Client::start(int server_port) {
     /**
      * connect to server
      * loop on:
@@ -36,8 +35,7 @@ void Client::start(int server_port)
     if (connect(client_fd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
         return;
 
-    while (true)
-    {
+    while (true) {
         cout << "> ";
         char command[MAX_COMMAND_LENGTH];
         memset(command, 0, MAX_COMMAND_LENGTH);
@@ -46,8 +44,7 @@ void Client::start(int server_port)
     }
 }
 
-int main()
-{
+int main() {
     Client client;
     client.start(8080);
     return 0;
