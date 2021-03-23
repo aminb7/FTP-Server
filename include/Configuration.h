@@ -12,13 +12,13 @@ public:
 
     int get_command_channel_port();
     int get_data_channel_port();
-    std::vector<User> get_users();
+    std::vector<User*> get_users();
     std::vector<std::string> get_files();
 
 private:
     int command_channel_port;
     int data_channel_port;
-    std::vector<User> users;
+    std::vector<User*> users;
     std::vector<std::string> files;
 };
 

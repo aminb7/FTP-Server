@@ -22,7 +22,7 @@ Configuration::Configuration(const string path) {
         bool is_admin = item.second.get<bool>("admin");
         int size = item.second.get<int>("size");
         
-        users.push_back(User(name, password, is_admin, size));
+        users.push_back(new User(name, password, is_admin, size));
     }
 
     pt::ptree files_tree = root_tree.get_child("files");
@@ -38,7 +38,7 @@ int Configuration::get_data_channel_port() {
     return data_channel_port;
 }
 
-std::vector<User> Configuration::get_users() {
+std::vector<User*> Configuration::get_users() {
     return users;
 }
 

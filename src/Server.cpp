@@ -8,6 +8,7 @@ Server::Server(Configuration configuration)
 , data_channel_port(configuration.get_data_channel_port())
 , users(configuration.get_users())
 , files(configuration.get_files()) {
+    command_handler = new CommandHandler(configuration);
 }
 
 void Server::start() {
@@ -80,7 +81,7 @@ void Server::start() {
                     // Data is received.
                     if (result > 0) {
                         cout << "received command: " << received_buffer << endl;
-                        command_handler.do_command(received_buffer);
+                        command_handler->do_command(i, received_buffer);
                     }
 
                     if (close_connection) {

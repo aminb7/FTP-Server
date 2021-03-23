@@ -9,6 +9,8 @@ OBJECTS = \
 	$(BUILD_DIR)/User.o \
 	$(BUILD_DIR)/Configuration.o \
 	$(BUILD_DIR)/Logger.o \
+	$(BUILD_DIR)/Utilities.o \
+	$(BUILD_DIR)/UserManager.o \
 
 CommandHandlerSensitivityList = \
 	$(SRC_DIR)/CommandHandler.cpp \
@@ -25,6 +27,14 @@ UserSensitivityList = \
 LoggerSensitivityList = \
 	$(SRC_DIR)/Logger.cpp \
 	$(INCLUDE_DIR)/Logger.h \
+
+UtilitiesSensitivityList = \
+	$(SRC_DIR)/Utilities.cpp \
+	$(INCLUDE_DIR)/Utilities.h \
+
+UserManagerSensitivityList = \
+	$(SRC_DIR)/UserManager.cpp \
+	$(INCLUDE_DIR)/UserManager.h \
 
 ServerSensitivityList = \
 	$(SRC_DIR)/Server.cpp \
@@ -56,6 +66,12 @@ $(BUILD_DIR)/User.o: $(UserSensitivityList)
 
 $(BUILD_DIR)/Logger.o: $(LoggerSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/Logger.cpp -o $(BUILD_DIR)/Logger.o
+
+$(BUILD_DIR)/Utilities.o: $(UtilitiesSensitivityList)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/Utilities.cpp -o $(BUILD_DIR)/Utilities.o
+
+$(BUILD_DIR)/UserManager.o: $(UserManagerSensitivityList)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/UserManager.cpp -o $(BUILD_DIR)/UserManager.o
 
 $(BUILD_DIR)/Server.o: $(ServerSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/Server.cpp -o $(BUILD_DIR)/Server.o

@@ -24,11 +24,11 @@ public:
     void start();
 
 private:
-    CommandHandler command_handler;
+    CommandHandler* command_handler;
 
     int command_channel_port;
     int data_channel_port;
-    std::vector<User> users;
+    std::vector<User*> users;
     std::vector<std::string> files;
 };
 
