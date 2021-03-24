@@ -35,12 +35,21 @@ void Client::start(int server_port) {
     if (connect(client_fd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
         return;
 
+    char received_output[128] = {0};
     while (true) {
+        // Receive command from command line.
         cout << "> ";
         char command[MAX_COMMAND_LENGTH];
         memset(command, 0, MAX_COMMAND_LENGTH);
         cin.getline (command, MAX_COMMAND_LENGTH);
+
+        // Send command to server.
         send(client_fd, command, MAX_COMMAND_LENGTH, 0);
+
+        // Receive output.
+        memset(received_output, 0, sizeof received_output);
+        recv(client_fd, received_output, sizeof(received_output), 0);
+        cout << "Command output: " << received_output << endl;
     }
 }
 

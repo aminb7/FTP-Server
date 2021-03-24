@@ -1,24 +1,35 @@
 #ifndef USER_H_
 #define USER_H_
 
+#include "UserIdentityInfo.h"
+
 #include <iostream>
 #include <string>
 
 class User {
 public:
-    User(std::string name, std::string password, bool is_admin, int available_size);
-    bool is_matched_with(string _username, string _password);
+    enum State {
+        WAITING_FOR_USERNAME,
+        WAITING_FOR_PASSWORD,
+        LOGGED_IN,
+    };
 
-    std::string get_name() {return name;}
+    User(int socket);
+
+    int get_socket();
+    State get_state();
+    std::string get_current_directory();
+    UserIdentityInfo* get_user_identity_info();
+
+    void set_state(State _state);
+    void set_user_identity_info(UserIdentityInfo* _user_identity_info);
+    void set_current_directory(std::string path);
 
 private:
-    std::string name;
-    std::string password;
-    bool is_admin;
-    int available_size;
-    std::string current_path;
-
-    int command_channel_socket;
+    int socket;
+    State state;
+    std::string current_directory;
+    UserIdentityInfo* user_identity_info;
 };
 
 #endif

@@ -7,9 +7,8 @@
 #include <vector>
 #include <cstring>
 
-using namespace std;
-
 std::string read_file_to_string(std::string file_path);
-vector<string> parse_command(char* input);
+std::vector<std::string> parse_command(char* input);
+std::string create_message(int code, std::string message);
 
 #endif

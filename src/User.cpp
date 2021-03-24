@@ -2,17 +2,37 @@
 
 using namespace std;
 
-User::User(string name, string password, bool is_admin, int available_size)
-: name(name)
-, password(password)
-, is_admin(is_admin)
-, available_size(available_size)
-, current_path("")
-, command_channel_socket(0) {
+User::User(int socket)
+: socket(socket)
+, state(WAITING_FOR_USERNAME)
+, current_directory("")
+, user_identity_info(nullptr) {
 }
 
-bool User::is_matched_with(string _username, string _password) {
-    if (name == _username && password == _password)
-        return true;
-    return false;
+int User::get_socket() {
+    return socket;
+}
+
+User::State User::get_state() {
+    return state;
+}
+
+string User::get_current_directory() {
+    return current_directory;
+}
+
+UserIdentityInfo* User::get_user_identity_info() {
+    return user_identity_info;
+}
+
+void User::set_state(User::State _state) {
+    state = _state;
+}
+
+void User::set_user_identity_info(UserIdentityInfo* _user_identity_info) {
+    user_identity_info = _user_identity_info;
+}
+
+void User::set_current_directory(string path) {
+    current_directory = path;
 }

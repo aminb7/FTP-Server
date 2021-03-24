@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "User.h"
+#include "UserIdentityInfo.h"
 
 class Configuration {
 public:
@@ -12,13 +12,13 @@ public:
 
     int get_command_channel_port();
     int get_data_channel_port();
-    std::vector<User*> get_users();
+    std::vector<UserIdentityInfo*> get_users_identity_info();
     std::vector<std::string> get_files();
 
 private:
     int command_channel_port;
     int data_channel_port;
-    std::vector<User*> users;
+    std::vector<UserIdentityInfo*> users_identity_info;
     std::vector<std::string> files;
 };
 

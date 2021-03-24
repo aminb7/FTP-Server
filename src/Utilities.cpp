@@ -10,8 +10,7 @@ std::string read_file_to_string(std::string file_path) {
     str.reserve(t.tellg());
     t.seekg(0, std::ios::beg);
 
-    str.assign((std::istreambuf_iterator<char>(t)),
-            std::istreambuf_iterator<char>());
+    str.assign((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
     return str;
 }
@@ -25,4 +24,8 @@ vector<string> parse_command(char* input) {
         token = strtok(NULL, " ");
     }
     return info;
+}
+
+string create_message(int code, string message) {
+    return to_string(code) + ": " + message;
 }

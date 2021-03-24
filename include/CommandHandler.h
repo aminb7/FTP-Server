@@ -4,6 +4,8 @@
 #include "UserManager.h"
 #include "Utilities.h"
 #include "Configuration.h"
+#include "User.h"
+#include "UserIdentityInfo.h"
 
 #include <cstring>
 #include <fstream>
@@ -16,6 +18,7 @@
 #define ARG2 2
 
 #define USER_COMMAND "user"
+#define PASS_COMMAND "pass"
 #define PWD_COMMAND "pwd"
 #define MKD_COMMAND "mkd"
 #define DELE_COMMAND "dele"
@@ -33,22 +36,24 @@ class CommandHandler {
 public:
     CommandHandler(Configuration configuration);
 
+    ~CommandHandler();
+
+    UserManager* get_user_manager();
+
     std::vector<std::string> do_command(int user_socket, char* command);
 
-    std::vector<std::string> handle_login_user(std::string username);
-    std::vector<std::string> handle_create_new_file(std::string file_path);
-    std::vector<std::string> handle_create_new_directory(std::string dir_path);
-    std::vector<std::string> handle_delete_directory(std::string dir_path);
-    std::vector<std::string> handle_delete_file(std::string file_path);
-    std::vector<std::string> handle_get_current_directory();
-    std::vector<std::string> handle_get_list_of_files();
-    std::vector<std::string> handle_change_working_directory(string);
-    std::vector<std::string> handle_rename_file(string old_name, string new_name);
-    std::vector<std::string> handle_download_file(string);
+    std::vector<std::string> handle_username(std::string username, User* user);
+    std::vector<std::string> handle_password(std::string password, User* user);
+    std::vector<std::string> handle_get_current_directory(User* user);
+    std::vector<std::string> handle_create_new_directory(std::string dir_path, User* user);
+    std::vector<std::string> handle_delete_directory(std::string dir_path, User* user);
+    std::vector<std::string> handle_delete_file(std::string file_path, User* user);
+    std::vector<std::string> handle_get_list_of_files(User* user);
+    std::vector<std::string> handle_change_working_directory(std::string dir_path, User* user);
+    std::vector<std::string> handle_rename_file(std::string old_name, std::string new_name, User* user);
+    std::vector<std::string> handle_download_file(std::string);
     std::vector<std::string> handle_help();
-    vector<std::string> handle_logout_user(int user_socket);
-
-    bool check_user_is_logged_in(int user_socket);
+    std::vector<std::string> handle_logout(User* user);
 
 private:
     //User* logged_in;

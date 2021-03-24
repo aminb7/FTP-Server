@@ -21,6 +21,8 @@ class Server {
 public:
     Server(Configuration configuration);
 
+    ~Server();
+
     void start();
 
 private:
@@ -28,8 +30,6 @@ private:
 
     int command_channel_port;
     int data_channel_port;
-    std::vector<User*> users;
-    std::vector<std::string> files;
 };
 
 #endif

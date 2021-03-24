@@ -6,6 +6,7 @@ CFLAGS = -std=c++11 -Wall -Werror -I$(INCLUDE_DIR)
 
 OBJECTS = \
 	$(BUILD_DIR)/CommandHandler.o \
+	$(BUILD_DIR)/UserIdentityInfo.o \
 	$(BUILD_DIR)/User.o \
 	$(BUILD_DIR)/Configuration.o \
 	$(BUILD_DIR)/Logger.o \
@@ -19,6 +20,10 @@ CommandHandlerSensitivityList = \
 ConfigurationSensitivityList = \
 	$(SRC_DIR)/Configuration.cpp \
 	$(INCLUDE_DIR)/Configuration.h \
+
+UserIdentityInfoSensitivityList = \
+	$(SRC_DIR)/UserIdentityInfo.cpp \
+	$(INCLUDE_DIR)/UserIdentityInfo.h \
 
 UserSensitivityList = \
 	$(SRC_DIR)/User.cpp \
@@ -63,6 +68,9 @@ $(BUILD_DIR)/Configuration.o: $(ConfigurationSensitivityList)
 
 $(BUILD_DIR)/User.o: $(UserSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/User.cpp -o $(BUILD_DIR)/User.o
+
+$(BUILD_DIR)/UserIdentityInfo.o: $(UserIdentityInfoSensitivityList)
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/UserIdentityInfo.cpp -o $(BUILD_DIR)/UserIdentityInfo.o
 
 $(BUILD_DIR)/Logger.o: $(LoggerSensitivityList)
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/Logger.cpp -o $(BUILD_DIR)/Logger.o
