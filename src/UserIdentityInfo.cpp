@@ -2,7 +2,7 @@
 
 using namespace std;
 
-UserIdentityInfo::UserIdentityInfo(string name, string password, bool is_admin, int available_size)
+UserIdentityInfo::UserIdentityInfo(string name, string password, bool is_admin, double available_size)
 : username(name)
 , password(password)
 , is_admin(is_admin)
@@ -21,4 +21,12 @@ std::string UserIdentityInfo::get_username() {
 
 std::string UserIdentityInfo::get_password() {
     return password;
+}
+
+double UserIdentityInfo::get_available_size() {
+    return available_size;
+}
+
+void UserIdentityInfo::decrease_available_size(double file_size) {
+   available_size -= file_size;
 }

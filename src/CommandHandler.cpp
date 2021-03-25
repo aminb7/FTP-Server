@@ -52,7 +52,7 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         return handle_rename_file(command_parts[ARG1], command_parts[ARG2], user);
 
     else if (command_parts[COMMAND] == RETR_COMMAND)
-        return handle_download_file(command_parts[ARG1]);
+        return handle_download_file(command_parts[ARG1], user);
 
     else if (command_parts[COMMAND] == HELP_COMMAND)
         return handle_help();
@@ -121,11 +121,11 @@ vector<string> CommandHandler::handle_delete_directory(string dir_path, User* us
     return {"500: Error", ""};
 }
 
-vector<string> CommandHandler::handle_delete_file(string file_path, User* user) {
-    string bash_command = "rm " + file_path;
+vector<string> CommandHandler::handle_delete_file(string file_name, User* user) {
+    string bash_command = "rm " + user->get_current_directory() + file_name;
     int status = system(bash_command.c_str());
     if (status == 0)
-        return {"250: " + file_path + " deleted.", ""};
+        return {"250: " + file_name + " deleted.", ""};
     return {"500: Error", ""};
 }
 
@@ -161,8 +161,34 @@ std::vector<std::string> CommandHandler::handle_rename_file(string old_name, str
     return {"500: Error", ""};
 }
 
-std::vector<std::string> CommandHandler::handle_download_file(string) {
-    return {"500: Error", ""};
+std::vector<std::string> CommandHandler::handle_download_file(string file_name, User* user) {
+    string file_path = user->get_current_directory() + file_name;
+    string size_command = "stat -c%s " + file_path + " > size.txt";
+    int status = system(size_command.c_str());
+    if (status != 0)
+        return {"500: Error", ""};
+    
+    double file_size = read_file_to_double("size.txt");
+    status = system("rm size.txt");
+    if (status != 0)
+        return {"500: Error", ""};
+
+    if (user -> is_able_to_download(file_size) == false)
+        return {"425: Can't open data connection.", ""};
+
+    string bash_command = "cp " + file_path + " file.txt";
+    status = system(bash_command.c_str());
+    if (status != 0)
+        return {"500: Error", ""};
+
+    string result = read_file_to_string("file.txt");
+    status = system("rm file.txt");
+    if (status != 0)
+        return {"500: Error", ""};
+
+    user->decrease_available_size(file_size);
+
+    return {"226: Successful Download.", result};
 }
 
 std::vector<std::string> CommandHandler::handle_help() {

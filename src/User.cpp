@@ -36,3 +36,13 @@ void User::set_user_identity_info(UserIdentityInfo* _user_identity_info) {
 void User::set_current_directory(string path) {
     current_directory = path;
 }
+
+bool User::is_able_to_download(double file_size) {
+    if (user_identity_info->get_available_size() >= file_size)
+        return true;
+    return false;
+}
+
+void User::decrease_available_size(double file_size) {
+   user_identity_info->decrease_available_size(file_size);
+}

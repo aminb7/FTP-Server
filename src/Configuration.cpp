@@ -20,7 +20,7 @@ Configuration::Configuration(const string path) {
         string name = item.second.get<string>("user");
         string password = item.second.get<string>("password");
         bool is_admin = item.second.get<bool>("admin");
-        int size = item.second.get<int>("size");
+        double size = item.second.get<double>("size");
         
         users_identity_info.push_back(new UserIdentityInfo(name, password, is_admin, size));
     }

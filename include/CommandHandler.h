@@ -59,11 +59,11 @@ public:
     std::vector<std::string> handle_get_current_directory(User* user);
     std::vector<std::string> handle_create_new_directory(std::string dir_path, User* user);
     std::vector<std::string> handle_delete_directory(std::string dir_path, User* user);
-    std::vector<std::string> handle_delete_file(std::string file_path, User* user);
+    std::vector<std::string> handle_delete_file(std::string file_name, User* user);
     std::vector<std::string> handle_get_list_of_files(User* user);
     std::vector<std::string> handle_change_working_directory(std::string dir_path, User* user);
     std::vector<std::string> handle_rename_file(std::string old_name, std::string new_name, User* user);
-    std::vector<std::string> handle_download_file(std::string);
+    std::vector<std::string> handle_download_file(std::string file_name, User* user);
     std::vector<std::string> handle_help();
     std::vector<std::string> handle_logout(User* user);
 

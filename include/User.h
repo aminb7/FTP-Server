@@ -24,6 +24,9 @@ public:
     void set_state(State _state);
     void set_user_identity_info(UserIdentityInfo* _user_identity_info);
     void set_current_directory(std::string path);
+    void decrease_available_size(double file_size);
+
+    bool is_able_to_download(double file_size);
 
 private:
     int socket;

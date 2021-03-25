@@ -15,6 +15,13 @@ std::string read_file_to_string(std::string file_path) {
     return str;
 }
 
+double read_file_to_double(std::string file_path) {
+    std::ifstream ifile(file_path, std::ios::in);
+    double data;
+    ifile >> data;
+    return data;
+}
+
 vector<string> parse_command(char* input) {
     vector<string> info;
     char *token = strtok(input, " "); 
