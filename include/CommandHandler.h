@@ -82,6 +82,8 @@ public:
     std::vector<std::string> handle_help();
     std::vector<std::string> handle_logout(User* user);
 
+    std::string get_username_by_socket(int user_socket);
+
 private:
     //User* logged_in;
     UserManager* user_manager;

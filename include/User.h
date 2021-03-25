@@ -19,6 +19,7 @@ public:
     int get_command_socket();
     int get_data_socket();
     State get_state();
+    std::string get_username();
     std::string get_current_directory();
     UserIdentityInfo* get_user_identity_info();
 

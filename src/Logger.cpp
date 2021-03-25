@@ -5,8 +5,24 @@ using namespace std;
 
 Logger::Logger(string path)
 : path(path) {
-    // create log file if does not exist.
+    fstream log_file;
+    log_file.open(path, std::fstream::in | std::fstream::out | std::fstream::app);
+
+    if (!log_file) {
+        cout << "Cannot open file, log file does not exist. Creating new file..";
+        log_file.open(path,  fstream::in | fstream::out | fstream::trunc);
+        log_file.close();
+    } 
 }
 
-void log(string message) {
+void Logger::log(string username, string message) {
+     fstream log_file;
+     log_file.open(path, std::fstream::in | std::fstream::out | std::fstream::app);
+     
+     auto curr = std::chrono::system_clock::now();
+     std::time_t curr_time = std::chrono::system_clock::to_time_t(curr);
+     
+     log_file << std::ctime(&curr_time);
+     log_file << username << ": " << message << endl;
+     log_file.close();
 }

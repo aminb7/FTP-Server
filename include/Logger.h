@@ -2,12 +2,16 @@
 #define LOGGER_H_
 
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <chrono>
+#include <ctime> 
 
 class Logger {
 public:
     Logger(std::string path);
 
-    void log(std::string message);
+    void log(std::string username, std::string message);
 
 private:
     std::string path;

@@ -22,6 +22,10 @@ User::State User::get_state() {
     return state;
 }
 
+string User::get_username() {
+    return user_identity_info->get_username();
+}
+
 string User::get_current_directory() {
     return current_directory;
 }

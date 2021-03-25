@@ -217,3 +217,12 @@ vector<string> CommandHandler::handle_logout(User* user) {
 
     return {SUCCESSFUL_QUIT, EMPTY};
 }
+
+string CommandHandler::get_username_by_socket(int user_socket) {
+    User* user = user_manager->get_user_by_socket(user_socket);
+    if (user == nullptr)
+        return "Anonymous";
+    else if (user->get_state() != User::State::LOGGED_IN)
+        return "Anonymous";
+    return user->get_username();
+}

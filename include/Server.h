@@ -16,6 +16,9 @@
 
 #include "Configuration.h"
 #include "CommandHandler.h"
+#include "Logger.h"
+
+#define LOG_FILE "log.txt"
 
 class Server {
 public:
@@ -27,6 +30,7 @@ public:
 
 private:
     CommandHandler* command_handler;
+    Logger* logger;
 
     int command_channel_port;
     int data_channel_port;
