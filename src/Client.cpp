@@ -35,7 +35,7 @@ void Client::start(int server_port) {
     if (connect(client_fd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
         return;
 
-    char received_output[128] = {0};
+    char received_output[2048] = {0};
     while (true) {
         // Receive command from command line.
         cout << "> ";
