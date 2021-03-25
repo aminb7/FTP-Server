@@ -28,5 +28,5 @@ double UserIdentityInfo::get_available_size() {
 }
 
 void UserIdentityInfo::decrease_available_size(double file_size) {
-   available_size -= file_size;
+   available_size -= (file_size/1000);
 }

@@ -2,6 +2,14 @@
 
 using namespace std;
 
+void erase_sub_str(std::string & main_str, const std::string & to_erase)
+{
+    size_t pos = main_str.find(to_erase);
+    if (pos != std::string::npos) {
+        main_str.erase(pos, to_erase.length());
+    }
+}
+
 std::string read_file_to_string(std::string file_path) {
     std::ifstream t(file_path);
     std::string str;
