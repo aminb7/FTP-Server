@@ -16,13 +16,13 @@ UserManager::~UserManager() {
     users.clear();
 }
 
-void UserManager::add_user(int socket) {
-    users.push_back(new User(socket));
+void UserManager::add_user(int command_socket, int data_socket) {
+    users.push_back(new User(command_socket, data_socket));
 }
 
 void UserManager::remove_user(int socket) {
     for(size_t i = 0; i < users.size(); ++i) {
-        if (users[i]->get_socket() == socket) {
+        if (users[i]->get_command_socket() == socket) {
             users.erase(users.begin() + i);
             break;
         }
@@ -31,7 +31,7 @@ void UserManager::remove_user(int socket) {
 
 User* UserManager::get_user_by_socket(int socket) {
     for(size_t i = 0; i < users.size(); ++i)
-        if (users[i]->get_socket() == socket)
+        if (users[i]->get_command_socket() == socket)
             return users[i];
     return nullptr;
 }
