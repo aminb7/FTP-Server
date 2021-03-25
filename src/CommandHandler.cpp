@@ -166,7 +166,20 @@ std::vector<std::string> CommandHandler::handle_download_file(string) {
 }
 
 std::vector<std::string> CommandHandler::handle_help() {
-    return {"500: Error", ""};
+    string info = "214\n";
+    info += USER_DESCRIPTION; 
+    info += PASS_DESCRIPTION;
+    info += PWD_DESCRIPTION;
+    info += MKD_DESCRIPTION;
+    info += DELE_DESCRIPTION;
+    info += LS_DESCRIPTION;
+    info += CWD_DESCRIPTION;
+    info += RENAME_DESCRIPTION;
+    info += RETR_DESCRIPTION;
+    info += HELP_DESCRIPTION;
+    info += QUIT_DESCRIPTION;
+    return {info, ""};
+    //return {"500: Error", ""};
 }
 
 vector<string> CommandHandler::handle_logout(User* user) {    
