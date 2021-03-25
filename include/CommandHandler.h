@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "User.h"
 #include "UserIdentityInfo.h"
+#include "Logger.h"
 
 #include <cstring>
 #include <fstream>
@@ -17,6 +18,10 @@
 #define ARG1 1
 #define ARG2 2
 #define EMPTY " "
+#define COLON ": "
+
+#define DELETE_CODE "250"
+#define CREATE_CODE "257"
 
 #define USER_COMMAND "user"
 #define PASS_COMMAND "pass"
@@ -61,7 +66,7 @@
 
 class CommandHandler {
 public:
-    CommandHandler(Configuration configuration);
+    CommandHandler(Configuration configuration, Logger* logger);
 
     ~CommandHandler();
 
@@ -87,6 +92,7 @@ public:
 private:
     //User* logged_in;
     UserManager* user_manager;
+    Logger* logger;
 };
 
 #endif

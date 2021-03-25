@@ -2,8 +2,9 @@
 
 using namespace std;
 
-CommandHandler::CommandHandler(Configuration configuration) {
+CommandHandler::CommandHandler(Configuration configuration, Logger* logger) {
     user_manager = new UserManager(configuration);
+    this->logger = logger;
 }
 
 CommandHandler::~CommandHandler() {
@@ -88,6 +89,8 @@ vector<std::string> CommandHandler::handle_password(string password, User* user)
 
     user->set_state(User::State::LOGGED_IN);
 
+    logger->log(user->get_username() + COLON + "logged in.");
+
     return {SUCCESSFUL_LOGIN, EMPTY};
 }
 
@@ -95,7 +98,7 @@ vector<string> CommandHandler::handle_get_current_directory(User* user) {
     string bash_command = "realpath " + user->get_current_directory() + " > file.txt";
     int status = system(bash_command.c_str());
     if (status != 0)
-        return {"500: Error", EMPTY};
+        return {GENERAL_ERROR, EMPTY};
 
     string result = read_file_to_string("file.txt");
     status = system("rm file.txt");
@@ -108,24 +111,33 @@ vector<string> CommandHandler::handle_get_current_directory(User* user) {
 vector<string> CommandHandler::handle_create_new_directory(string dir_path, User* user) {
     string bash_command = "mkdir " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
-    if (status == 0)
-        return {"257: " + dir_path + " created.", EMPTY};
-    return {"bad", EMPTY};
+    if (status == 0) {
+        string message = COLON + dir_path + " created.";
+        logger->log(user->get_username() + message);
+        return {CREATE_CODE + message, EMPTY};
+    }
+    return {GENERAL_ERROR, EMPTY};
 }
 
 vector<string> CommandHandler::handle_delete_directory(string dir_path, User* user) {
     string bash_command = "rm -r " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
-    if (status == 0)
-        return {"250: " + dir_path + " deleted.", EMPTY};
+    if (status == 0) {
+        string message = COLON + dir_path + " deleted.";
+        logger->log(user->get_username() + message);
+        return {DELETE_CODE + message, EMPTY};
+    }
     return {GENERAL_ERROR, EMPTY};
 }
 
 vector<string> CommandHandler::handle_delete_file(string file_name, User* user) {
     string bash_command = "rm " + user->get_current_directory() + file_name;
     int status = system(bash_command.c_str());
-    if (status == 0)
-        return {"250: " + file_name + " deleted.", EMPTY};
+    if (status == 0) {
+        string message = COLON + file_name + " deleted.";
+        logger->log(user->get_username() + message);
+        return {DELETE_CODE + message, EMPTY};
+    }
     return {GENERAL_ERROR, EMPTY};
 }
 
@@ -190,6 +202,9 @@ std::vector<std::string> CommandHandler::handle_download_file(string file_name, 
 
     user->decrease_available_size(file_size);
 
+    string message = COLON + file_name + " downloaded.";
+    logger->log(user->get_username() + message);
+
     return {SUCCESSFUL_DOWNLOAD, result};
 }
 
@@ -214,6 +229,8 @@ vector<string> CommandHandler::handle_logout(User* user) {
         return {GENERAL_ERROR, EMPTY};
 
     user->set_state(User::State::WAITING_FOR_USERNAME);
+
+    logger->log(user->get_username() + COLON + "logged out.");
 
     return {SUCCESSFUL_QUIT, EMPTY};
 }

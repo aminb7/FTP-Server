@@ -6,8 +6,8 @@ using namespace std;
 Server::Server(Configuration configuration)
 : command_channel_port(configuration.get_command_channel_port())
 , data_channel_port(configuration.get_data_channel_port()) {
-    command_handler = new CommandHandler(configuration);
     logger = new Logger(LOG_FILE);
+    command_handler = new CommandHandler(configuration, logger);
 }
 
 Server::~Server() {
@@ -96,8 +96,6 @@ void Server::start() {
                         send(fd , output[0].c_str() , output[0].size() , 0);
                         send(command_handler->get_user_manager()->get_user_by_socket(fd)->get_data_socket(),
                                 output[1].c_str() , output[1].size() , 0);
-
-                        logger->log(command_handler->get_username_by_socket(fd), output[0]);
                     }
 
                     if (close_connection) {
