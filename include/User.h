@@ -14,9 +14,10 @@ public:
         LOGGED_IN,
     };
 
-    User(int socket);
+    User(int command_socket, int data_socket);
 
-    int get_socket();
+    int get_command_socket();
+    int get_data_socket();
     State get_state();
     std::string get_current_directory();
     UserIdentityInfo* get_user_identity_info();
@@ -29,7 +30,8 @@ public:
     bool is_able_to_download(double file_size);
 
 private:
-    int socket;
+    int command_socket;
+    int data_socket;
     State state;
     std::string current_directory;
     UserIdentityInfo* user_identity_info;

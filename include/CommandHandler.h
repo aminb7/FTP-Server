@@ -16,6 +16,7 @@
 #define COMMAND 0
 #define ARG1 1
 #define ARG2 2
+#define EMPTY " "
 
 #define USER_COMMAND "user"
 #define PASS_COMMAND "pass"

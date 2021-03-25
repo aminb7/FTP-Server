@@ -19,7 +19,7 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
 
     User* user = user_manager->get_user_by_socket(user_socket);
     if (user == nullptr)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     if (command_parts[COMMAND] == USER_COMMAND)
         return handle_username(command_parts[ARG1], user);
@@ -28,7 +28,7 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         return handle_password(command_parts[ARG1], user);
 
     else if (user->get_state() != User::State::LOGGED_IN)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     else if (command_parts[COMMAND] == PWD_COMMAND)
         return handle_get_current_directory(user);
@@ -61,84 +61,84 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         return handle_logout(user);
 
     else
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 }
 
 vector<std::string> CommandHandler::handle_username(string username, User* user) {
     if(user->get_state() != User::State::WAITING_FOR_USERNAME)
-        return {"503: Bad sequence of commands.", ""};
+        return {"503: Bad sequence of commands.", EMPTY};
 
     UserIdentityInfo* user_identity_info = user_manager->get_user_info_by_username(username);
 
     if (user_identity_info == nullptr)
-        return {"430: Invalid username or password.", ""};
+        return {"430: Invalid username or password.", EMPTY};
     
     user->set_state(User::State::WAITING_FOR_PASSWORD);
     user->set_user_identity_info(user_identity_info);
 
-    return {"331: User name Okay, need password.", ""};
+    return {"331: User name Okay, need password.", EMPTY};
 }
 
 vector<std::string> CommandHandler::handle_password(string password, User* user) {
     if(user->get_state() != User::State::WAITING_FOR_PASSWORD)
-        return {"503: Bad sequence of commands.", ""};
+        return {"503: Bad sequence of commands.", EMPTY};
 
     if (user->get_user_identity_info()->get_password() != password)
-        return {"430: Invalid username or password.", ""};
+        return {"430: Invalid username or password.", EMPTY};
 
     user->set_state(User::State::LOGGED_IN);
 
-    return {"230: User looged in, proceed. Logged out if appropriate.", ""};
+    return {"230: User looged in, proceed. Logged out if appropriate.", EMPTY};
 }
 
 vector<string> CommandHandler::handle_get_current_directory(User* user) {
     string bash_command = "realpath " + user->get_current_directory() + " > file.txt";
     int status = system(bash_command.c_str());
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     string result = read_file_to_string("file.txt");
     status = system("rm file.txt");
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
-    return {"257: " + result, ""};
+    return {"257: " + result, EMPTY};
 }
 
 vector<string> CommandHandler::handle_create_new_directory(string dir_path, User* user) {
     string bash_command = "mkdir " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
     if (status == 0)
-        return {"257: " + dir_path + " created.", ""};
-    return {"bad", ""};
+        return {"257: " + dir_path + " created.", EMPTY};
+    return {"bad", EMPTY};
 }
 
 vector<string> CommandHandler::handle_delete_directory(string dir_path, User* user) {
     string bash_command = "rm -r " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
     if (status == 0)
-        return {"250: " + dir_path + " deleted.", ""};
-    return {"500: Error", ""};
+        return {"250: " + dir_path + " deleted.", EMPTY};
+    return {"500: Error", EMPTY};
 }
 
 vector<string> CommandHandler::handle_delete_file(string file_name, User* user) {
     string bash_command = "rm " + user->get_current_directory() + file_name;
     int status = system(bash_command.c_str());
     if (status == 0)
-        return {"250: " + file_name + " deleted.", ""};
-    return {"500: Error", ""};
+        return {"250: " + file_name + " deleted.", EMPTY};
+    return {"500: Error", EMPTY};
 }
 
 vector<string> CommandHandler::handle_get_list_of_files(User* user) {
     string bash_command = "ls " + user->get_current_directory() + " > file.txt";
     int status = system(bash_command.c_str());
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     string result = read_file_to_string("file.txt");
     status = system("rm file.txt");
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     return {"226: List transfer done", result};
 }
@@ -149,7 +149,7 @@ std::vector<std::string> CommandHandler::handle_change_working_directory(string 
     else
         user->set_current_directory(user->get_current_directory() + dir_path + "/");
 
-    return {"250: Successful change.", ""};
+    return {"250: Successful change.", EMPTY};
 }
 
 std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, User* user) {
@@ -157,8 +157,8 @@ std::vector<std::string> CommandHandler::handle_rename_file(string old_name, str
             user->get_current_directory() + new_name;
     int status = system(bash_command.c_str());
     if (status == 0)
-        return {"250: Successful change.", ""};
-    return {"500: Error", ""};
+        return {"250: Successful change.", EMPTY};
+    return {"500: Error", EMPTY};
 }
 
 std::vector<std::string> CommandHandler::handle_download_file(string file_name, User* user) {
@@ -166,25 +166,25 @@ std::vector<std::string> CommandHandler::handle_download_file(string file_name, 
     string size_command = "stat -c%s " + file_path + " > size.txt";
     int status = system(size_command.c_str());
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
     
     double file_size = read_file_to_double("size.txt");
     status = system("rm size.txt");
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     if (user -> is_able_to_download(file_size) == false)
-        return {"425: Can't open data connection.", ""};
+        return {"425: Can't open data connection.", EMPTY};
 
     string bash_command = "cp " + file_path + " file.txt";
     status = system(bash_command.c_str());
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     string result = read_file_to_string("file.txt");
     status = system("rm file.txt");
     if (status != 0)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     user->decrease_available_size(file_size);
 
@@ -204,15 +204,14 @@ std::vector<std::string> CommandHandler::handle_help() {
     info += RETR_DESCRIPTION;
     info += HELP_DESCRIPTION;
     info += QUIT_DESCRIPTION;
-    return {info, ""};
-    //return {"500: Error", ""};
+    return {info, EMPTY};
 }
 
 vector<string> CommandHandler::handle_logout(User* user) {    
     if (user->get_state() != User::State::LOGGED_IN)
-        return {"500: Error", ""};
+        return {"500: Error", EMPTY};
 
     user->set_state(User::State::WAITING_FOR_USERNAME);
 
-    return {"221: Successful Quit.", ""};
+    return {"221: Successful Quit.", EMPTY};
 }

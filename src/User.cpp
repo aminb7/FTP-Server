@@ -2,15 +2,20 @@
 
 using namespace std;
 
-User::User(int socket)
-: socket(socket)
+User::User(int command_socket, int data_socket)
+: command_socket(command_socket)
+, data_socket(data_socket)
 , state(WAITING_FOR_USERNAME)
 , current_directory("")
 , user_identity_info(nullptr) {
 }
 
-int User::get_socket() {
-    return socket;
+int User::get_command_socket() {
+    return command_socket;
+}
+
+int User::get_data_socket() {
+    return data_socket;
 }
 
 User::State User::get_state() {

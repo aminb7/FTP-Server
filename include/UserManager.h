@@ -15,7 +15,7 @@ public:
 
     ~UserManager();
 
-    void add_user(int socket);
+    void add_user(int command_socket, int data_socket);
     void remove_user(int socket);
 
     User* get_user_by_socket(int socket);
