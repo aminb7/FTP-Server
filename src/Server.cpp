@@ -99,10 +99,7 @@ void Server::start() {
 
                     // Data is received.
                     if (result > 0) {
-                        cout << "received command: " << received_buffer << endl;
                         vector<string> output = command_handler->do_command(fd, received_buffer);
-                        cout << "Command output: " << output[0] << endl;
-                        cout << "Data output: " << output[1] << endl;
 
                         send(fd , output[0].c_str() , output[0].size() , 0);
                         send(command_handler->get_user_manager()->get_user_by_socket(fd)->get_data_socket(),
@@ -122,7 +119,7 @@ void Server::start() {
             }
         }
 
-        printf("--------------------------------- EVENT ---------------------------------\n");
+        printf("---------------- Event ----------------\n");
     }
 }
 
