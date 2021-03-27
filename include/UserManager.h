@@ -22,9 +22,6 @@ public:
 
     UserIdentityInfo* get_user_info_by_username(std::string username);
 
-    bool is_logged_in(int user_socket);
-    void login_user(int user_socket, std::string username, std::string password);
-
 private:
     std::vector<UserIdentityInfo*> users_identity_info;
     std::vector<User*> users;

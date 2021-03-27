@@ -42,18 +42,3 @@ UserIdentityInfo* UserManager::get_user_info_by_username(string username) {
             return users_identity_info[i];
     return nullptr;
 }
-
-bool UserManager::is_logged_in(int) {
-    // if(std::find(sockets.begin(), sockets.end(), user_socket) != sockets.end())
-    //     return true;
-    return false;
-}
-
-void UserManager::login_user(int, string username, string password) {
-    for (size_t i = 0; i < users_identity_info.size(); i++) {
-        if (users_identity_info[i]->is_matched_with(username, password)) {
-            // sockets.push_back(user_socket);
-            break;
-        }
-    }
-}
