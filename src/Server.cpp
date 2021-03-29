@@ -15,30 +15,41 @@ Server::~Server() {
 }
 
 void Server::start() {
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0)
+    int command_server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    int data_server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (command_server_fd < 0 || data_server_fd < 0)
         return;
 
     int opt = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+    if (setsockopt(command_server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+        return;
+    if (setsockopt(data_server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
         return;
 
-    struct sockaddr_in address;
-    address.sin_family = AF_INET; 
-    address.sin_addr.s_addr = INADDR_ANY; 
-    address.sin_port = htons(8080);
+    struct sockaddr_in command_address, data_address;
+    command_address.sin_family = AF_INET;
+    command_address.sin_addr.s_addr = INADDR_ANY;
+    command_address.sin_port = htons(command_channel_port);
 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
+    data_address.sin_family = AF_INET; 
+    data_address.sin_addr.s_addr = INADDR_ANY; 
+    data_address.sin_port = htons(data_channel_port);
+
+    if (bind(command_server_fd, (struct sockaddr *)&command_address, sizeof(command_address)) < 0) 
+        return;
+    if (bind(data_server_fd, (struct sockaddr *)&data_address, sizeof(data_address)) < 0) 
         return;
 
     constexpr int backlog = 10;
-    if (listen(server_fd, backlog) < 0)
+    if (listen(command_server_fd, backlog) < 0)
+        return;
+    if (listen(data_server_fd, backlog) < 0)
         return;
 
     fd_set read_fds, copy_fds;
     FD_ZERO(&copy_fds);
-    FD_SET(server_fd, &copy_fds);
-    int max_fd = server_fd;
+    FD_SET(command_server_fd, &copy_fds);
+    int max_fd = command_server_fd;
     int activity;
     char received_buffer[128] = {0};
 
@@ -57,12 +68,12 @@ void Server::start() {
         for (int fd = 0; fd <= max_fd  &&  ready_sockets > 0; ++fd) {
             if (FD_ISSET(fd, &read_fds)) {
                 // New connection.
-                if (fd == server_fd) {
-                    int new_command_socket = accept(server_fd, NULL, NULL);
+                if (fd == command_server_fd) {
+                    int new_command_socket = accept(command_server_fd, NULL, NULL);
                     if (new_command_socket < 0)
                         return;
 
-                    int new_data_socket = accept(server_fd, NULL, NULL);
+                    int new_data_socket = accept(data_server_fd, NULL, NULL);
                     if (new_data_socket < 0)
                         return;
                     
@@ -88,10 +99,7 @@ void Server::start() {
 
                     // Data is received.
                     if (result > 0) {
-                        cout << "received command: " << received_buffer << endl;
                         vector<string> output = command_handler->do_command(fd, received_buffer);
-                        cout << "Command output: " << output[COMMAND] << endl;
-                        cout << "Data output: " << output[CHANNEL] << endl;
 
                         send(fd , output[COMMAND].c_str() , output[COMMAND].size() , 0);
                         send(command_handler->get_user_manager()->get_user_by_socket(fd)->get_data_socket(),
@@ -111,7 +119,7 @@ void Server::start() {
             }
         }
 
-        printf("--------------------------------- EVENT ---------------------------------\n");
+        printf("---------------- Event ----------------\n");
     }
 }
 

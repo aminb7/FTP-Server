@@ -13,30 +13,28 @@
 
 using namespace std;
 
-void Client::start(int server_port) {
-    /**
-     * connect to server
-     * loop on:
-     *      receive input command.
-     *      send to server.
-     *      receive output of command from server.
-     *      print output of command.
-     */
+void Client::start(int command_channel_port, int data_channel_port) {
     int client_command_fd = socket(AF_INET, SOCK_STREAM, 0);
     int client_data_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (client_command_fd < 0 || client_data_fd < 0)
         return;
 
-    struct sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(server_port);
-    if (inet_pton(AF_INET, "127.0.0.1", &server_address.sin_addr) <= 0)
+    struct sockaddr_in server_command_address;
+    server_command_address.sin_family = AF_INET;
+    server_command_address.sin_port = htons(command_channel_port);
+    if (inet_pton(AF_INET, "127.0.0.1", &server_command_address.sin_addr) <= 0)
         return;
 
-    if (connect(client_command_fd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
+    struct sockaddr_in server_data_address;
+    server_data_address.sin_family = AF_INET;
+    server_data_address.sin_port = htons(data_channel_port);
+    if (inet_pton(AF_INET, "127.0.0.1", &server_data_address.sin_addr) <= 0)
         return;
 
-    if (connect(client_data_fd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
+    if (connect(client_command_fd, (struct sockaddr*)&server_command_address, sizeof(server_command_address)) < 0)
+        return;
+
+    if (connect(client_data_fd, (struct sockaddr*)&server_data_address, sizeof(server_data_address)) < 0)
         return;
 
     char received_command_output[2048] = {0};
@@ -64,7 +62,9 @@ void Client::start(int server_port) {
 }
 
 int main() {
+    const string config_file_path = "configuration/config.json";
+    Configuration configuration(config_file_path);
     Client client;
-    client.start(8080);
+    client.start(configuration.get_command_channel_port(), configuration.get_data_channel_port());
     return 0;
 }
