@@ -121,6 +121,7 @@ vector<std::string> CommandHandler::handle_username(string username, User* user)
     
     user->set_state(User::State::WAITING_FOR_PASSWORD);
     user->set_user_identity_info(user_identity_info);
+    user->set_current_directory("");
 
     return {USERNAME_ACCEPTED, EMPTY};
 }
@@ -209,8 +210,7 @@ vector<string> CommandHandler::handle_get_list_of_files(User* user) {
     return {LIST_TRANSFER_DONE, result};
 }
 
-std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, 
-    User* user) {
+std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, User* user) {
     if(dir_path == "")
         user->set_current_directory("");
     else
