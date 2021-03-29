@@ -87,7 +87,7 @@ public:
     std::vector<std::string> handle_help();
     std::vector<std::string> handle_logout(User* user);
 
-    bool user_has_access_to_file(std::string filename, User* user);
+    bool user_has_access_to_file(std::string file_name, User* user);
 
 private:
     UserManager* user_manager;

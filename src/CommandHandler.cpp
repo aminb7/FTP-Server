@@ -102,8 +102,8 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         return {SYNTAX_ERROR, EMPTY};
 }
 
-bool CommandHandler::user_has_access_to_file(string filename, User* user) {
-    if (!user_manager->contains_as_special_file(filename))
+bool CommandHandler::user_has_access_to_file(string file_name, User* user) {
+    if (!user_manager->contains_as_special_file(file_name))
         return true;
     else if (user->is_able_to_access())
         return true;
@@ -140,7 +140,11 @@ vector<std::string> CommandHandler::handle_password(string password, User* user)
 }
 
 vector<string> CommandHandler::handle_get_current_directory(User* user) {
-    string bash_command = "realpath " + user->get_current_directory() + " > file.txt";
+    string current_path = user->get_current_directory();
+    if (current_path == "")
+        current_path = ".";
+        
+    string bash_command = "realpath " + current_path + " > file.txt";
     int status = system(bash_command.c_str());
     if (status != 0)
         return {GENERAL_ERROR, EMPTY};
@@ -205,7 +209,8 @@ vector<string> CommandHandler::handle_get_list_of_files(User* user) {
     return {LIST_TRANSFER_DONE, result};
 }
 
-std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, User* user) {
+std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, 
+    User* user) {
     if(dir_path == "")
         user->set_current_directory("");
     else
@@ -214,7 +219,8 @@ std::vector<std::string> CommandHandler::handle_change_working_directory(string 
     return {SUCCESSFUL_CHANGE, EMPTY};
 }
 
-std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, User* user) {
+std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, 
+    User* user) {
     if (!user_has_access_to_file(old_name, user))
         return {FILE_UNAVAILABLE, EMPTY};
 
