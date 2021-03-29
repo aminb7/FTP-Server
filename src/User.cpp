@@ -47,11 +47,15 @@ void User::set_current_directory(string path) {
 }
 
 bool User::is_able_to_download(double file_size) {
-    if (user_identity_info->get_available_size() >= file_size)
+    if (user_identity_info->get_available_size() >= file_size/1000)
         return true;
     return false;
 }
 
 void User::decrease_available_size(double file_size) {
    user_identity_info->decrease_available_size(file_size);
+}
+
+bool User::is_able_to_access() {
+    return user_identity_info->is_admin_user();
 }

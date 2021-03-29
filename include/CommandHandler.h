@@ -87,10 +87,9 @@ public:
     std::vector<std::string> handle_help();
     std::vector<std::string> handle_logout(User* user);
 
-    std::string get_username_by_socket(int user_socket);
+    bool user_has_access_to_file(std::string filename, User* user);
 
 private:
-    //User* logged_in;
     UserManager* user_manager;
     Logger* logger;
 };

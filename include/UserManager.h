@@ -22,8 +22,9 @@ public:
 
     UserIdentityInfo* get_user_info_by_username(std::string username);
 
-    bool is_logged_in(int user_socket);
     void login_user(int user_socket, std::string username, std::string password);
+
+    bool contains_as_special_file(std::string filename);
 
 private:
     std::vector<UserIdentityInfo*> users_identity_info;

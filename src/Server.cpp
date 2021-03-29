@@ -90,12 +90,12 @@ void Server::start() {
                     if (result > 0) {
                         cout << "received command: " << received_buffer << endl;
                         vector<string> output = command_handler->do_command(fd, received_buffer);
-                        cout << "Command output: " << output[0] << endl;
-                        cout << "Data output: " << output[1] << endl;
+                        cout << "Command output: " << output[COMMAND] << endl;
+                        cout << "Data output: " << output[CHANNEL] << endl;
 
-                        send(fd , output[0].c_str() , output[0].size() , 0);
+                        send(fd , output[COMMAND].c_str() , output[COMMAND].size() , 0);
                         send(command_handler->get_user_manager()->get_user_by_socket(fd)->get_data_socket(),
-                                output[1].c_str() , output[1].size() , 0);
+                                output[CHANNEL].c_str() , output[CHANNEL].size() , 0);
                     }
 
                     if (close_connection) {

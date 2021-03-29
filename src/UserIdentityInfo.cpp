@@ -15,6 +15,10 @@ bool UserIdentityInfo::is_matched_with(string _username, string _password) {
     return false;
 }
 
+bool UserIdentityInfo::is_admin_user() {
+    return is_admin;
+}
+
 std::string UserIdentityInfo::get_username() {
     return username;
 }

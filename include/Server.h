@@ -19,6 +19,8 @@
 #include "Logger.h"
 
 #define LOG_FILE "log.txt"
+#define COMMAND 0
+#define CHANNEL 1
 
 class Server {
 public:

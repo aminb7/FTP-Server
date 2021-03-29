@@ -29,6 +29,7 @@ public:
     void decrease_available_size(double file_size);
 
     bool is_able_to_download(double file_size);
+    bool is_able_to_access();
 
 private:
     int command_socket;

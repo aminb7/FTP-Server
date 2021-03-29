@@ -22,47 +22,92 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
     if (user == nullptr)
         return {GENERAL_ERROR, EMPTY};
 
-    if (command_parts[COMMAND] == USER_COMMAND)
+    if (command_parts[COMMAND] == USER_COMMAND) {
+        if (command_parts.size() != 2)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_username(command_parts[ARG1], user);
+    }
 
-    else if (command_parts[COMMAND] == PASS_COMMAND)
+    else if (command_parts[COMMAND] == PASS_COMMAND) {
+        if (command_parts.size() != 2)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_password(command_parts[ARG1], user);
+    }
 
-    else if (user->get_state() != User::State::LOGGED_IN)
+    else if (user->get_state() != User::State::LOGGED_IN) 
         return {NOT_AUTHORIZED, EMPTY};
 
-    else if (command_parts[COMMAND] == PWD_COMMAND)
+    else if (command_parts[COMMAND] == PWD_COMMAND) {
+        if (command_parts.size() != 1)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_get_current_directory(user);
+    }
 
-    else if (command_parts[COMMAND] == MKD_COMMAND)
+    else if (command_parts[COMMAND] == MKD_COMMAND) {
+        if (command_parts.size() != 2)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_create_new_directory(command_parts[ARG1], user);
+    }
 
-    else if (command_parts[COMMAND] == DELE_COMMAND && command_parts[ARG1] == DELE_DIRECTORY_OPTION)
+    else if (command_parts[COMMAND] == DELE_COMMAND && command_parts[ARG1] == DELE_DIRECTORY_OPTION) {
+        if (command_parts.size() != 3)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_delete_directory(command_parts[ARG2], user);
+    }
 
-    else if (command_parts[COMMAND] == DELE_COMMAND && command_parts[ARG1] == DELE_FILE_OPTION)
-        return handle_delete_file(command_parts[ARG2], user);
+    else if (command_parts[COMMAND] == DELE_COMMAND && command_parts[ARG1] == DELE_FILE_OPTION) {
+        if (command_parts.size() != 3)
+            return {SYNTAX_ERROR, EMPTY};
+        return handle_delete_directory(command_parts[ARG2], user);   
+    }
 
-    else if (command_parts[COMMAND] == LS_COMMAND) 
+    else if (command_parts[COMMAND] == LS_COMMAND) {
+        if (command_parts.size() != 1)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_get_list_of_files(user);
+    }
 
-    else if (command_parts[COMMAND] == CWD_COMMAND)
-        return handle_change_working_directory(((command_parts.size() >= 2) ? command_parts[ARG1] : ""), user);
+    else if (command_parts[COMMAND] == CWD_COMMAND) {
+        if (command_parts.size() != 1 && command_parts.size() != 2)
+            return {SYNTAX_ERROR, EMPTY};
+        return handle_change_working_directory(((command_parts.size() >= 2) ? 
+                                                command_parts[ARG1] : ""), user);
+    }
 
-    else if (command_parts[COMMAND] == RENAME_COMMAND)
+    else if (command_parts[COMMAND] == RENAME_COMMAND) {
+        if (command_parts.size() != 3)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_rename_file(command_parts[ARG1], command_parts[ARG2], user);
+    }
 
-    else if (command_parts[COMMAND] == RETR_COMMAND)
+    else if (command_parts[COMMAND] == RETR_COMMAND) {
+        if (command_parts.size() != 2)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_download_file(command_parts[ARG1], user);
+    }
 
-    else if (command_parts[COMMAND] == HELP_COMMAND)
+    else if (command_parts[COMMAND] == HELP_COMMAND) {
+        if (command_parts.size() != 1)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_help();
+    }
 
-    else if (command_parts[COMMAND] == QUIT_COMMAND)
+    else if (command_parts[COMMAND] == QUIT_COMMAND) {
+        if (command_parts.size() != 1)
+            return {SYNTAX_ERROR, EMPTY};
         return handle_logout(user);
+    }
 
     else
-        return {GENERAL_ERROR, EMPTY};
+        return {SYNTAX_ERROR, EMPTY};
+}
+
+bool CommandHandler::user_has_access_to_file(string filename, User* user) {
+    if (!user_manager->contains_as_special_file(filename))
+        return true;
+    else if (user->is_able_to_access())
+        return true;
+    return false;
 }
 
 vector<std::string> CommandHandler::handle_username(string username, User* user) {
@@ -131,6 +176,9 @@ vector<string> CommandHandler::handle_delete_directory(string dir_path, User* us
 }
 
 vector<string> CommandHandler::handle_delete_file(string file_name, User* user) {
+    if (!user_has_access_to_file(file_name, user))
+        return {FILE_UNAVAILABLE, EMPTY};
+
     string bash_command = "rm " + user->get_current_directory() + file_name;
     int status = system(bash_command.c_str());
     if (status == 0) {
@@ -167,6 +215,9 @@ std::vector<std::string> CommandHandler::handle_change_working_directory(string 
 }
 
 std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, User* user) {
+    if (!user_has_access_to_file(old_name, user))
+        return {FILE_UNAVAILABLE, EMPTY};
+
     string bash_command = "mv " + user->get_current_directory() + old_name + " " +
             user->get_current_directory() + new_name;
     int status = system(bash_command.c_str());
@@ -176,6 +227,9 @@ std::vector<std::string> CommandHandler::handle_rename_file(string old_name, str
 }
 
 std::vector<std::string> CommandHandler::handle_download_file(string file_name, User* user) {
+    if (!user_has_access_to_file(file_name, user))
+        return {FILE_UNAVAILABLE, EMPTY};
+
     string file_path = user->get_current_directory() + file_name;
     string size_command = "stat -c%s " + file_path + " > " + "size.txt";
     int status = system(size_command.c_str());
@@ -233,13 +287,4 @@ vector<string> CommandHandler::handle_logout(User* user) {
     logger->log(user->get_username() + COLON + "logged out.");
 
     return {SUCCESSFUL_QUIT, EMPTY};
-}
-
-string CommandHandler::get_username_by_socket(int user_socket) {
-    User* user = user_manager->get_user_by_socket(user_socket);
-    if (user == nullptr)
-        return "Anonymous";
-    else if (user->get_state() != User::State::LOGGED_IN)
-        return "Anonymous";
-    return user->get_username();
 }
