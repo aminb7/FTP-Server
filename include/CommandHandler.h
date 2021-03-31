@@ -17,8 +17,10 @@
 #define COMMAND 0
 #define ARG1 1
 #define ARG2 2
+#define SUCCESS 0
 #define EMPTY " "
 #define COLON ": "
+#define ROOT ""
 
 #define DELETE_CODE "250"
 #define CREATE_CODE "257"

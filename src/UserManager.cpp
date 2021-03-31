@@ -43,15 +43,6 @@ UserIdentityInfo* UserManager::get_user_info_by_username(string username) {
     return nullptr;
 }
 
-void UserManager::login_user(int, string username, string password) {
-    for (size_t i = 0; i < users_identity_info.size(); i++) {
-        if (users_identity_info[i]->is_matched_with(username, password)) {
-            // sockets.push_back(user_socket);
-            break;
-        }
-    }
-}
-
 bool UserManager::contains_as_special_file(string filename) {
     for (size_t i = 0; i < files.size(); i++) {
         if (files[i] == filename)

@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 
+#define ROOT ""
+
 class User {
 public:
     enum State {

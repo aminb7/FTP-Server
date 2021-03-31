@@ -6,7 +6,7 @@ User::User(int command_socket, int data_socket)
 : command_socket(command_socket)
 , data_socket(data_socket)
 , state(WAITING_FOR_USERNAME)
-, current_directory("")
+, current_directory(ROOT)
 , user_identity_info(nullptr) {
 }
 

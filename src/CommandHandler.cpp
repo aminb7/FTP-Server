@@ -71,7 +71,7 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         if (command_parts.size() != 1 && command_parts.size() != 2)
             return {SYNTAX_ERROR, EMPTY};
         return handle_change_working_directory(((command_parts.size() >= 2) ? 
-                                                command_parts[ARG1] : ""), user);
+                                                command_parts[ARG1] : ROOT), user);
     }
 
     else if (command_parts[COMMAND] == RENAME_COMMAND) {
@@ -121,7 +121,7 @@ vector<std::string> CommandHandler::handle_username(string username, User* user)
     
     user->set_state(User::State::WAITING_FOR_PASSWORD);
     user->set_user_identity_info(user_identity_info);
-    user->set_current_directory("");
+    user->set_current_directory(ROOT);
 
     return {USERNAME_ACCEPTED, EMPTY};
 }
@@ -142,17 +142,18 @@ vector<std::string> CommandHandler::handle_password(string password, User* user)
 
 vector<string> CommandHandler::handle_get_current_directory(User* user) {
     string current_path = user->get_current_directory();
-    if (current_path == "")
+    if (current_path == ROOT)
         current_path = ".";
         
     string bash_command = "realpath " + current_path + " > file.txt";
     int status = system(bash_command.c_str());
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     string result = read_file_to_string("file.txt");
+    result.pop_back();
     status = system("rm file.txt");
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     return {"257: " + result, EMPTY};
@@ -161,7 +162,7 @@ vector<string> CommandHandler::handle_get_current_directory(User* user) {
 vector<string> CommandHandler::handle_create_new_directory(string dir_path, User* user) {
     string bash_command = "mkdir " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
-    if (status == 0) {
+    if (status == SUCCESS) {
         string message = COLON + dir_path + " created.";
         logger->log(user->get_username() + message);
         return {CREATE_CODE + message, EMPTY};
@@ -172,7 +173,7 @@ vector<string> CommandHandler::handle_create_new_directory(string dir_path, User
 vector<string> CommandHandler::handle_delete_directory(string dir_path, User* user) {
     string bash_command = "rm -r " + user->get_current_directory() + dir_path;
     int status = system(bash_command.c_str());
-    if (status == 0) {
+    if (status == SUCCESS) {
         string message = COLON + dir_path + " deleted.";
         logger->log(user->get_username() + message);
         return {DELETE_CODE + message, EMPTY};
@@ -186,7 +187,7 @@ vector<string> CommandHandler::handle_delete_file(string file_name, User* user) 
 
     string bash_command = "rm " + user->get_current_directory() + file_name;
     int status = system(bash_command.c_str());
-    if (status == 0) {
+    if (status == SUCCESS) {
         string message = COLON + file_name + " deleted.";
         logger->log(user->get_username() + message);
         return {DELETE_CODE + message, EMPTY};
@@ -197,12 +198,13 @@ vector<string> CommandHandler::handle_delete_file(string file_name, User* user) 
 vector<string> CommandHandler::handle_get_list_of_files(User* user) {
     string bash_command = "ls " + user->get_current_directory() + " > file.txt";
     int status = system(bash_command.c_str());
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     string result = read_file_to_string("file.txt");
+    result.pop_back();
     status = system("rm file.txt");
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     erase_sub_str(result, "file.txt\n");
@@ -211,8 +213,8 @@ vector<string> CommandHandler::handle_get_list_of_files(User* user) {
 }
 
 std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, User* user) {
-    if(dir_path == "")
-        user->set_current_directory("");
+    if(dir_path == ROOT)
+        user->set_current_directory(ROOT);
     else
         user->set_current_directory(user->get_current_directory() + dir_path + "/");
 
@@ -227,7 +229,7 @@ std::vector<std::string> CommandHandler::handle_rename_file(string old_name, str
     string bash_command = "mv " + user->get_current_directory() + old_name + " " +
             user->get_current_directory() + new_name;
     int status = system(bash_command.c_str());
-    if (status == 0)
+    if (status == SUCCESS)
         return {SUCCESSFUL_CHANGE, EMPTY};
     return {GENERAL_ERROR, EMPTY};
 }
@@ -239,12 +241,12 @@ std::vector<std::string> CommandHandler::handle_download_file(string file_name, 
     string file_path = user->get_current_directory() + file_name;
     string size_command = "stat -c%s " + file_path + " > " + "size.txt";
     int status = system(size_command.c_str());
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
     
     double file_size = read_file_to_double("size.txt");
     status = system("rm size.txt");
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     if (user -> is_able_to_download(file_size) == false)
@@ -252,12 +254,12 @@ std::vector<std::string> CommandHandler::handle_download_file(string file_name, 
 
     string bash_command = "cp " + file_path + " file.txt";
     status = system(bash_command.c_str());
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     string result = read_file_to_string("file.txt");
     status = system("rm file.txt");
-    if (status != 0)
+    if (status != SUCCESS)
         return {GENERAL_ERROR, EMPTY};
 
     user->decrease_available_size(file_size);

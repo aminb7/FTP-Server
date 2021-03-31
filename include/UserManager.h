@@ -22,8 +22,6 @@ public:
 
     UserIdentityInfo* get_user_info_by_username(std::string username);
 
-    void login_user(int user_socket, std::string username, std::string password);
-
     bool contains_as_special_file(std::string filename);
 
 private:
