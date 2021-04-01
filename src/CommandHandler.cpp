@@ -70,8 +70,7 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
     else if (command_parts[COMMAND] == CWD_COMMAND) {
         if (command_parts.size() != 1 && command_parts.size() != 2)
             return {SYNTAX_ERROR, EMPTY};
-        return handle_change_working_directory(((command_parts.size() >= 2) ? 
-                                                command_parts[ARG1] : ROOT), user);
+        return handle_change_working_directory(((command_parts.size() >= 2) ? command_parts[ARG1] : ROOT), user);
     }
 
     else if (command_parts[COMMAND] == RENAME_COMMAND) {
@@ -213,6 +212,12 @@ vector<string> CommandHandler::handle_get_list_of_files(User* user) {
 }
 
 std::vector<std::string> CommandHandler::handle_change_working_directory(string dir_path, User* user) {
+    string check_validity_command = "realpath " + dir_path + " > file.txt";
+    int status1 = system(check_validity_command.c_str());
+    int status2 = system("rm file.txt");
+    if (status1 != SUCCESS || status2 != SUCCESS)
+        return {GENERAL_ERROR, EMPTY};
+
     if(dir_path == ROOT)
         user->set_current_directory(ROOT);
     else

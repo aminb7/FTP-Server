@@ -38,7 +38,7 @@ void Client::start(int command_channel_port, int data_channel_port) {
         return;
 
     char received_command_output[2048] = {0};
-    char received_data_output[2048] = {0};
+    char received_data_output[4048] = {0};
     while (true) {
         // Receive command from command line.
         cout << "> ";
