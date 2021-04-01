@@ -8,6 +8,8 @@
 #include <vector>
 #include <algorithm>
 
+#define SLASH '/'
+
 class UserManager
 {
 public:
@@ -22,7 +24,7 @@ public:
 
     UserIdentityInfo* get_user_info_by_username(std::string username);
 
-    bool contains_as_special_file(std::string filename);
+    bool contains_as_special_file(std::string file_path);
 
 private:
     std::vector<UserIdentityInfo*> users_identity_info;

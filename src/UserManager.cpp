@@ -43,10 +43,16 @@ UserIdentityInfo* UserManager::get_user_info_by_username(string username) {
     return nullptr;
 }
 
-bool UserManager::contains_as_special_file(string filename) {
-    for (size_t i = 0; i < files.size(); i++) {
-        if (files[i] == filename)
+bool UserManager::contains_as_special_file(string file_path) {
+    size_t last_slash_pos = file_path.rfind(SLASH);
+    string file_name = "";
+    if (last_slash_pos == string::npos)
+        file_name = file_path;
+    else
+        file_name = file_path.substr(last_slash_pos + 1);
+
+    for (size_t i = 0; i < files.size(); i++)
+        if (files[i] == file_name)
             return true;
-    }
     return false;
 }
