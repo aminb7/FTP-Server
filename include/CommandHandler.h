@@ -21,6 +21,7 @@
 #define EMPTY " "
 #define COLON ": "
 #define ROOT ""
+#define BACK_SLASH "/"
 
 #define DELETE_CODE "250"
 #define CREATE_CODE "257"
@@ -89,6 +90,7 @@ public:
     std::vector<std::string> handle_help();
     std::vector<std::string> handle_logout(User* user);
 
+    bool is_a_file_name(std::string file_name);
     bool user_has_access_to_file(std::string file_name, User* user);
 
 private:

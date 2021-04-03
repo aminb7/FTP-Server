@@ -101,6 +101,12 @@ vector<string> CommandHandler::do_command(int user_socket, char* command) {
         return {SYNTAX_ERROR, EMPTY};
 }
 
+bool CommandHandler::is_a_file_name(string file_name) {
+    if (file_name.find(BACK_SLASH) != std::string::npos)
+        return false;
+    return true;
+}
+
 bool CommandHandler::user_has_access_to_file(string file_name, User* user) {
     if (!user_manager->contains_as_special_file(file_name))
         return true;
@@ -181,6 +187,9 @@ vector<string> CommandHandler::handle_delete_directory(string dir_path, User* us
 }
 
 vector<string> CommandHandler::handle_delete_file(string file_name, User* user) {
+    if (!is_a_file_name(file_name))
+        return {SYNTAX_ERROR, EMPTY};
+
     if (!user_has_access_to_file(file_name, user))
         return {FILE_UNAVAILABLE, EMPTY};
 
@@ -226,8 +235,10 @@ std::vector<std::string> CommandHandler::handle_change_working_directory(string 
     return {SUCCESSFUL_CHANGE, EMPTY};
 }
 
-std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, 
-    User* user) {
+std::vector<std::string> CommandHandler::handle_rename_file(string old_name, string new_name, User* user) {
+    if (!is_a_file_name(old_name) || !is_a_file_name(new_name))
+        return {SYNTAX_ERROR, EMPTY};
+
     if (!user_has_access_to_file(old_name, user))
         return {FILE_UNAVAILABLE, EMPTY};
 
@@ -240,6 +251,9 @@ std::vector<std::string> CommandHandler::handle_rename_file(string old_name, str
 }
 
 std::vector<std::string> CommandHandler::handle_download_file(string file_name, User* user) {
+    if (!is_a_file_name(file_name))
+        return {SYNTAX_ERROR, EMPTY};
+        
     if (!user_has_access_to_file(file_name, user))
         return {FILE_UNAVAILABLE, EMPTY};
 
