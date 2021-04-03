@@ -40,7 +40,3 @@ vector<string> parse_command(char* input) {
     }
     return info;
 }
-
-string create_message(int code, string message) {
-    return to_string(code) + ": " + message;
-}
