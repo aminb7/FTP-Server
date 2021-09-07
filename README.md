@@ -1,7 +1,9 @@
 # FTP-Server
 
 The File Transfer Protocol (FTP) is a standard communication protocol used for the transfer of computer files from a server to a client on a computer network. 
-In this project, we implemented an FTP Server on a client–server model architecture using separate control and data connections between the client and the server. Implemented commands are as follows.
+In this project, we implemented an FTP Server on a client–server model architecture using separate control and data connections between the client and the server. 
+
+## Commands
 
 1. `USER [name]`, Its argument is used to specify the user's string. It is used for user authentication.
 2. `PASS [password]`, Its argument is used to specify the user's password. It is used for user authentication.
